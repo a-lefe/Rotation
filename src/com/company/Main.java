@@ -11,11 +11,9 @@ public class Main {
     public static void main(String[] args) {
 
         int[] init = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-        Matrice matrice = new Matrice("123456789");
-
-
         List<Matrice> matrices = new ArrayList<>();
         List<Matrice> matricesTemp = new ArrayList<>();
+        Matrice test = new Matrice("123456789");
         StringBuilder sb = new StringBuilder();
         String s;
 
@@ -40,6 +38,10 @@ public class Main {
                 matricesTemp.clear();
             }
         }
+
+        test.computeVoisins();
+        System.out.println(test.voisins);
+        System.out.println(test.voisins.size());
 
         System.out.println(matrices.size());
     }
