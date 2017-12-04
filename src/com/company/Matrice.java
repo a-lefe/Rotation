@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Matrice {
-    int[] mat = new int[9];
 
-    String matrix = new String();
+
+    public String matrix;
 
     public Matrice (String string){
-        this.matrix = matrix;
+        this.matrix = string;
     }
 
     public String getMatrix() {
@@ -18,5 +18,11 @@ public class Matrice {
 
     public void setMatrix(String matrix) {
         this.matrix = matrix;
+    }
+
+
+    @Override
+    public String toString() {
+        return this.getMatrix();
     }
 }
