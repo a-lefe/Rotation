@@ -1,5 +1,6 @@
 package com.company;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -7,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
 
         int[] init = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-        List<Matrice> matrices = new ArrayList<>();
+        List<Matrice> allMatrices = new ArrayList<>();
         List<Matrice> matricesTemp = new ArrayList<>();
 
         Matrice test = new Matrice("123456789");
@@ -20,10 +21,10 @@ public class Main {
         int i;
         for (int n = 2; n <= 9; n++) {
             if (n == 2) {
-                matrices.add(new Matrice("12"));
-                matrices.add(new Matrice("21"));
+                allMatrices.add(new Matrice("12"));
+                allMatrices.add(new Matrice("21"));
             } else {
-                for (Matrice node : matrices) {
+                for (Matrice node : allMatrices) {
                     for (i = 0; i < n; i++) {
                         sb = new StringBuilder(node.getMatrix());
                         s = "" + n;
@@ -31,10 +32,10 @@ public class Main {
                         matricesTemp.add(new Matrice(sb.toString()));
                     }
                 }
-                matrices.clear();
+                allMatrices.clear();
                 for (Matrice node : matricesTemp) {
 
-                    matrices.add(node);
+                    allMatrices.add(node);
                 }
 
                 matricesTemp.clear();
@@ -42,41 +43,39 @@ public class Main {
 
         }
 
-        for (Matrice node : matrices) {
-            if (node.getMatrix().length() != 9)
+        for (Matrice m : allMatrices) {
+            if (m.getMatrix().length() != 9)
                 continue;
-            graph.put(node.getMatrix(), node);
+            graph.put(m.getMatrix(), m);
         }
 
-        for(Matrice node : graph.values()){
-            node.computeVoisins(graph);
+        for (Matrice m : graph.values()) {
+            m.computeVoisins(graph);
         }
 
-        Matrice m1 = graph.get("123456789").voisins.get(0);
-        Matrice m2 = graph.get("1");
+        computeSolution(graph.get("143276598"), graph);
+        //computeSolution(graph.get("918273645"), graph);
+        //computeSolution(graph.get("745981326"), graph);
+        //computeSolution(graph.get("657483912"), graph);
+        //computeSolution(graph.get("975431862"), graph);
 
-        for(Matrice m : graph.values()){
-            if (m.getMatrix().length() < 10){
-                System.out.println(m.getMatrix() + " length" + m.getMatrix().length());
-            }
+        resetFlags(graph);
+        System.out.println("Le nombre de composantes connexes est : " + nbComposanteConnexe(graph).size());
+        //ArrayList<Matrice> mats = new ArrayList<>(graph.values());
+        System.out.println("Le nombre de rotations minimal: " + nbRotationMinimal(graph));
 
-        }
-
-        //List<Matrice> parcours = parcoursEnLargeur(graph.get("143276598"), graph);
-        //System.out.println(parcours);
-        parcours(graph.get("143276598"));
-        System.out.println("test");
 
     }
 
-    public static List<Matrice> parcoursEnLargeur(Matrice m,Map<String, Matrice> graph){
+    public static List<Matrice> parcoursEnLargeur(Matrice m, Map<String, Matrice> graph) {
+        resetFlags(graph);
         LinkedList<Matrice> s = new LinkedList<>();
         s.addFirst(m);
         m.marquer();
-        while(!s.isEmpty()){
+        while (!s.isEmpty()) {
             Matrice mat = s.pollFirst();
-            for(Matrice cm : mat.voisins){
-                if(cm.flag)
+            for (Matrice cm : mat.voisins) {
+                if (cm.flag)
                     continue;
                 cm.parents.addAll(mat.parents);
                 cm.parents.add(mat);
@@ -84,7 +83,7 @@ public class Main {
                 cm.marquer();
                 s.addLast(cm);
 
-                if(s.contains(graph.get("123456789"))){
+                if (s.contains(graph.get("123456789"))) {
                     cm.getParents().add(graph.get("123456789"));
                     return cm.getParents();
                 }
@@ -93,24 +92,76 @@ public class Main {
         return null;
     }
 
-    public static void parcours(Matrice m){
+    public static ArrayList<ArrayList<Matrice>> nbComposanteConnexe(Map<String, Matrice> graph) {
+        List<Matrice> matrices = new ArrayList<>(graph.values());
+        ArrayList<Matrice> courante = new ArrayList<>();
+        ArrayList<ArrayList<Matrice>> returner = new ArrayList<ArrayList<Matrice>>();
+        while (!matrices.isEmpty()) {
+            parcoursQ3(courante, matrices.get(0));
+            matrices.removeAll(courante);
+            returner.add(new ArrayList<>(courante));
+            courante.clear();
+        }
+        for (Matrice m : matrices) {
+            m.flag = false;
+        }
+        return returner;
+    }
+
+    private static void parcoursQ3(ArrayList<Matrice> courante, Matrice m) {
+        Stack<Matrice> s = new Stack();
+        s.push(m);
+        courante.add(m);
+        m.marquer();
+        int nbParcouru = 1;
+        while(!s.empty()){
+            for(Matrice cm : s.pop().voisins){
+                if(cm.flag)
+                    continue;
+                cm.marquer();
+                s.push(cm);
+                courante.add(cm);
+                nbParcouru = nbParcouru +1;
+            }
+        }
+    }
+
+    public static int nbRotationMinimal(Map<String, Matrice> graph){
+        resetFlags(graph);
         LinkedList<Matrice> s = new LinkedList<>();
+        Matrice m = graph.get("123456789");
         s.addFirst(m);
         m.marquer();
-        int nbParcourus = 0;
-        while(!s.isEmpty()){
+        m.niveau = 0;
+        int max = 0;
+        while (!s.isEmpty()) {
             Matrice mat = s.pollFirst();
-            for(Matrice cm : mat.voisins){
-                if(cm.flag)
+            for (Matrice cm : mat.voisins) {
+                if (cm.flag)
                     continue;
 
                 cm.marquer();
                 s.addLast(cm);
-                nbParcourus = nbParcourus + 1;
+                cm.niveau = mat.niveau+1;
+                max = Math.max(cm.niveau , max);
             }
-
         }
-        System.out.println(nbParcourus);
+        return max;
     }
+
+    public static void resetFlags(Map<String, Matrice> graph) {
+        for (Matrice m : graph.values()) {
+            m.flag = false;
+        }
+    }
+
+    public static void computeSolution(Matrice matrice, Map<String, Matrice> graph) {
+        System.out.println("Pour la matrice 143276598 : ");
+        List<Matrice> parcours = parcoursEnLargeur(graph.get("143276598"), graph);
+        int nbEtapes = parcours.size() - 1;
+        System.out.println("Il y a : " + nbEtapes + " rotations à effectuer");
+        System.out.println("Les rotations sont :" + parcours);
+    }
+
 
 }

@@ -8,6 +8,7 @@ public class Matrice {
     public String matrix;
 
     public List<Matrice> voisins = new ArrayList<>();
+    public int niveau = 0;
 
     public Matrice (String string){
         this.matrix = string;
