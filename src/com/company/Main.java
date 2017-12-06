@@ -54,10 +54,10 @@ public class Main {
         }
 
         computeSolution(graph.get("143276598"), graph);
-        //computeSolution(graph.get("918273645"), graph);
+        computeSolution(graph.get("918273645"), graph);
         //computeSolution(graph.get("745981326"), graph);
-        //computeSolution(graph.get("657483912"), graph);
-        //computeSolution(graph.get("975431862"), graph);
+        computeSolution(graph.get("657483912"), graph);
+        computeSolution(graph.get("975431862"), graph);
 
         resetFlags(graph);
         System.out.println("Le nombre de composantes connexes est : " + nbComposanteConnexe(graph).size());
@@ -152,15 +152,19 @@ public class Main {
     public static void resetFlags(Map<String, Matrice> graph) {
         for (Matrice m : graph.values()) {
             m.flag = false;
+            m.parents.clear();
         }
     }
 
     public static void computeSolution(Matrice matrice, Map<String, Matrice> graph) {
-        System.out.println("Pour la matrice 143276598 : ");
-        List<Matrice> parcours = parcoursEnLargeur(graph.get("143276598"), graph);
-        int nbEtapes = parcours.size() - 1;
+        int nbEtapes = 0;
+        String matrix = matrice.getMatrix();
+        System.out.println("Pour la matrice  : " + matrix);
+        List<Matrice> parcours = new ArrayList<>(parcoursEnLargeur(graph.get(matrix), graph));
+        nbEtapes = parcours.size() - 1;
         System.out.println("Il y a : " + nbEtapes + " rotations à effectuer");
         System.out.println("Les rotations sont :" + parcours);
+        parcours.clear();
     }
 
 

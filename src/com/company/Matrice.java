@@ -140,6 +140,14 @@ public class Matrice {
         this.parents = parents;
     }
 
+    public List<Matrice> getVoisins() {
+        return voisins;
+    }
+
+    public void setVoisins(List<Matrice> voisins) {
+        this.voisins = voisins;
+    }
+
     @Override
     public String toString() {
         return this.getMatrix();
