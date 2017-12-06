@@ -1,16 +1,13 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Matrice {
 
 
     public String matrix;
 
-    public List<String> voisins = new ArrayList<>();
+    public List<Matrice> voisins = new ArrayList<>();
 
     public Matrice (String string){
         this.matrix = string;
@@ -20,13 +17,13 @@ public class Matrice {
         return matrix;
     }
 
-    public void setMatrix(String matrix) {
-        this.matrix = matrix;
-    }
+    public List<Matrice> parents = new ArrayList<>();
+
+    public boolean flag = false;
 
 
-    public List<String> computeVoisins() {
-        List<String> voisins = new ArrayList<>();
+    public List<Matrice> computeVoisins(Map<String, Matrice> graph) {
+        List<Matrice> voisins = new ArrayList<>();
         char c0, c1, c2, c3, c4, c5, c6, c7, c8, c9;
         StringBuilder string = null;
         String initial = this.getMatrix();
@@ -123,15 +120,28 @@ public class Matrice {
                 default:
                     break;
             }
-            this.voisins.add(string.toString());
+            this.voisins.add(graph.get(string.toString()));
         }
 
 
-        return voisins;
+        return this.voisins;
+    }
+
+    public void marquer(){
+        this.flag = true;
+    }
+
+    public List<Matrice> getParents() {
+        return parents;
+    }
+
+    public void setParents(List<Matrice> parents) {
+        this.parents = parents;
     }
 
     @Override
     public String toString() {
         return this.getMatrix();
     }
+
 }
